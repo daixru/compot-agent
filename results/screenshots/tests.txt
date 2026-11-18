@@ -1,0 +1,10 @@
+test_changing_source_costs_another_lift (test_compote.CompoteTests.test_changing_source_costs_another_lift) ... ok
+test_curve_uses_last_window (test_compote.CompoteTests.test_curve_uses_last_window) ... ok
+test_minimum_against_shortest_paths (test_compote.CompoteTests.test_minimum_against_shortest_paths) ... ok
+test_one_lift_for_two_recipients (test_compote.CompoteTests.test_one_lift_for_two_recipients) ... ok
+test_volumes_and_legal_actions (test_compote.CompoteTests.test_volumes_and_legal_actions) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.029s
+
+OK
