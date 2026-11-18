@@ -1,0 +1,94 @@
+{
+  "episodes": 60000,
+  "seeds": 20,
+  "alpha": 0.2,
+  "gamma": 1,
+  "epsilon": "1 -> 0.05 за первые 80% эпизодов, затем 0.05",
+  "max_steps": 200,
+  "check_every": 1000,
+  "oracle_mean_lifts": 1.6869565217391305,
+  "methods": {
+    "q_learning": {
+      "final_mean": {
+        "success_rate": 1.0,
+        "optimal_rate": 1.0,
+        "mean_lifts": 1.6869565217391305,
+        "mean_return": -1.6869565217391305,
+        "mean_steps": 6.108695652173913
+      },
+      "final_sd": {
+        "optimal_rate": 0.0,
+        "mean_lifts": 0.0
+      },
+      "stable95_episodes": [
+        21000,
+        19000,
+        19000,
+        16000,
+        16000,
+        17000,
+        19000,
+        18000,
+        16000,
+        18000,
+        17000,
+        17000,
+        16000,
+        18000,
+        18000,
+        17000,
+        17000,
+        17000,
+        18000,
+        17000
+      ],
+      "stable95_median": 17000.0,
+      "training_seconds_mean": 3.9087961170414927,
+      "interactions_mean": 1716291.15,
+      "all_training_return": -19.451821666666667,
+      "last_1000_return": -2.00575,
+      "truncation_rate": 0.03536500000000001
+    },
+    "sarsa": {
+      "final_mean": {
+        "success_rate": 1.0,
+        "optimal_rate": 0.8971739130434783,
+        "mean_lifts": 1.7941304347826088,
+        "mean_return": -1.7941304347826088,
+        "mean_steps": 3.268478260869565
+      },
+      "final_sd": {
+        "optimal_rate": 0.02249376703151635,
+        "mean_lifts": 0.02575204543323932
+      },
+      "stable95_episodes": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "stable95_median": null,
+      "training_seconds_mean": 2.121331685659243,
+      "interactions_mean": 1113498.35,
+      "all_training_return": -13.7513875,
+      "last_1000_return": -2.0105,
+      "truncation_rate": 0.018577499999999997
+    }
+  }
+}
