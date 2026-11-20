@@ -1,10 +1,21 @@
-"""Проверки физики переливания и независимый поиск точного минимума."""
+"""Проверки среды, демонстрации и точного минимума подъёмов."""
 
 from collections import deque
+from contextlib import redirect_stdout
+from io import StringIO
 from itertools import product
+import json
+from pathlib import Path
+import subprocess
+import sys
+from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import Mock, patch
 
-from compote import CAPACITY, TOTAL, TARGET, initial_states, is_goal, possible_actions, pour
+from compote import (
+    CAPACITY, MAX_STEPS, TARGET, TOTAL, demonstrate, initial_states, is_goal,
+    possible_actions, pour,
+)
 from train import learning_curve
 
 
@@ -68,6 +79,37 @@ class CompoteTests(unittest.TestCase):
         points = list(learning_curve(rewards))
         self.assertEqual(points[0], {"episode": 500, "mean_return": -10})
         self.assertEqual(points[-1], {"episode": 1000, "mean_return": -2})
+
+    def test_demo_success_at_step_limit(self):
+        policy = Mock(spec=Path)
+        policy.read_text.return_value = json.dumps([
+            {"state": [5, 3, 2, 2, -1], "action": [0, 2]},
+            {"state": [4, 3, 3, 2, 0], "action": [0, 3]},
+        ])
+        output = StringIO()
+        with patch("compote.MAX_STEPS", 2), redirect_stdout(output):
+            self.assertTrue(demonstrate((5, 3, 2, 2), policy))
+        self.assertEqual(output.getvalue().splitlines()[-1], "Готово. Подъёмов: 1")
+
+    def test_demo_cli_failure_at_step_limit(self):
+        # Стратегия бесконечно переливает одну единицу между первыми двумя стаканами.
+        with TemporaryDirectory() as directory:
+            policy = Path(directory) / "policy.json"
+            policy.write_text(json.dumps([
+                {"state": [5, 3, 2, 2, -1], "action": [0, 1]},
+                {"state": [4, 4, 2, 2, 0], "action": [1, 0]},
+                {"state": [5, 3, 2, 2, 1], "action": [0, 1]},
+            ]), encoding="utf-8")
+            script = Path(__file__).resolve().parents[1] / "compote.py"
+            result = subprocess.run(
+                [sys.executable, "-X", "utf8", script, "5", "3", "2", "2", "--policy", policy],
+                capture_output=True, encoding="utf-8", check=False, timeout=10,
+            )
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(
+            result.stdout.splitlines()[-1],
+            f"Цель не достигнута за {MAX_STEPS} переливаний",
+        )
 
 
 if __name__ == "__main__":

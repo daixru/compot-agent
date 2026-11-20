@@ -160,7 +160,7 @@ def save_policy(q, path):
 
 
 def demonstrate(volumes, policy_path):
-    """Показывает переливания готового агента; в выводе стаканы пронумерованы с 1."""
+    """Показывает переливания с нумерацией с 1 и возвращает признак достижения цели."""
     if len(volumes) != 4 or sum(volumes) != TOTAL or any(v < 0 or v > CAPACITY for v in volumes):
         raise ValueError("Нужны 4 целых объёма от 0 до 6 с суммой 12")
     rows = json.loads(policy_path.read_text(encoding="utf-8"))
@@ -169,14 +169,17 @@ def demonstrate(volumes, policy_path):
     print(f"Начало: {state[:4]}")
     for _ in range(MAX_STEPS):
         if is_goal(state):
-            print(f"Готово. Подъёмов: {lifts}")
-            return
+            break
         action = policy[state]
         state, reward = pour(state, action)
         lifts -= reward
         print(f"Стакан {action[0] + 1} в стакан {action[1] + 1}: "
               f"{state[:4]}, новых подъёмов: {-reward}")
-    print("Цель не достигнута за 200 переливаний")
+    if is_goal(state):
+        print(f"Готово. Подъёмов: {lifts}")
+        return True
+    print(f"Цель не достигнута за {MAX_STEPS} переливаний")
+    return False
 
 
 if __name__ == "__main__":
@@ -185,6 +188,7 @@ if __name__ == "__main__":
     parser.add_argument("--policy", type=Path, default=Path("results/q_learning_policy.json"))
     args = parser.parse_args()
     try:
-        demonstrate(args.volumes, args.policy)
+        if not demonstrate(args.volumes, args.policy):
+            parser.exit(1)
     except (ValueError, KeyError, OSError) as error:
         parser.error(str(error))
